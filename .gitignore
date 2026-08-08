@@ -1,0 +1,11 @@
+﻿# Build
+/out/
+/build/
+
+# VS
+.vs/
+.vscode/
+.obsidian/
+
+# CMake user presets
+CMakePresets.json
