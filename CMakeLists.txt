@@ -23,5 +23,11 @@ set_target_properties(spdlog::spdlog PROPERTIES
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/SDL3/cmake")
 find_package(SDL3 REQUIRED CONFIG)
 
+# EnTT
+add_library(EnTT::EnTT INTERFACE IMPORTED GLOBAL)
+target_include_directories(EnTT::EnTT INTERFACE
+    ${CMAKE_SOURCE_DIR}/Dependencies/entt/include
+)
+
 add_subdirectory(Engine)
 add_subdirectory(Editor)

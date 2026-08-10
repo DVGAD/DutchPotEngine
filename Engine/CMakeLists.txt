@@ -1,5 +1,11 @@
 ﻿add_library(DutchPotEngine STATIC
     EngineCore/EngineCore.cpp
+    EngineCore/Scheduler.cpp
+    Renderer/Renderer.cpp
+    ECS/Components/GameWorld.cpp
+    ECS/Systems/MovementSystem.cpp
+    ECS/Systems/RenderSystem.cpp
+
     Log/Log.cpp
 )
 
@@ -12,4 +18,5 @@ target_compile_definitions(DutchPotEngine PRIVATE
 target_link_libraries(DutchPotEngine PUBLIC
     SDL3::SDL3
     spdlog::spdlog
+    EnTT::EnTT
 )

@@ -1,26 +1,28 @@
 ﻿#pragma once
+#include <EngineCore/Scheduler.hpp>
+#include <Renderer/Renderer.hpp>
+#include <memory>
 
-// Forward declaration of SDL_Window
 struct SDL_Window;
 
-// EngineCore class definition
 namespace DPE
 {
+    class GameWorld;
+    class Rendering;
+
     class EngineCore
     {
     public:
-        // Constructor
-        EngineCore(int width, int height, char const* title);
-
-        // Destructor
+        EngineCore();
         ~EngineCore();
 
-        // Run the main loop of the engine
+        bool Init(int width, int height, char const* title);
         void Run();
     private:
-		// Engine boolean to control the main loop
-        bool m_engine_running = true;
-		// SDL_Window pointer to hold the window instance
         SDL_Window* m_window = nullptr;
+        DPE::Scheduler m_scheduler;
+        std::unique_ptr<Renderer> m_renderer = nullptr;
+        std::unique_ptr<GameWorld> m_world = nullptr;
+        bool m_engine_running = false;
     };
 }
