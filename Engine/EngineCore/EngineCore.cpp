@@ -1,11 +1,10 @@
-﻿#include <SDL3/SDL.h>
-#include <EngineCore/EngineCore.hpp>
-#include <ECS/Components/GameWorld.hpp>
-#include <ECS/Components/Physics/Physics.hpp>
-#include <ECS/Components/Rendering/Rendering.hpp>
-#include <ECS/Systems/RenderSystem.hpp>
-#include <ECS/Systems/MovementSystem.hpp>
+﻿#include "EngineCore.hpp"
+#include <SDL3/SDL.h>
 #include <Log/Log.hpp>
+#include <Renderer/Renderer.hpp>
+#include <World/GameWorld.hpp>
+#include <World/Scene.hpp>
+#include <Input/Input.hpp>
 
 namespace DPE
 {
@@ -15,7 +14,6 @@ namespace DPE
     {
         DPE::Log::Init();
         LOG_STATUS("--DutchPotEngine--");
-        LOG_STATUS("Initializing Engine Systems...");
 
         if (!SDL_Init(SDL_INIT_VIDEO))
         {
@@ -27,8 +25,10 @@ namespace DPE
         if (!m_window)
         {
             LOG_CRITICAL("SDL_CreateWindow Failed: {0}", SDL_GetError());
-			return false;
+            return false;
         }
+
+        LOG_STATUS("Initializing Engine Systems...");
 
         m_renderer = std::make_unique<Renderer>();
         if (!m_renderer->Init(m_window))
@@ -37,36 +37,40 @@ namespace DPE
             m_renderer = nullptr;
             return false;
         }
-        m_scheduler.RegisterVariableSystem([this](float dt) { m_renderer->Clear(); m_renderer->Present(); });
-        //----------------------------------//
 
-        // Test
         m_world = std::make_unique<GameWorld>();
-        entt::entity test_entity = m_world->GetRegistry().create();
-        m_world->GetRegistry().emplace<Transform>(test_entity, 100.0f, 200.0f);
-        m_world->GetRegistry().emplace<Velocity>(test_entity, 50.0f, 0.0f);
-        m_world->GetRegistry().emplace<Sprite>(test_entity, 50.0f, 50.0f, uint8_t{ 255 }, uint8_t{ 0 }, uint8_t{ 0 }, uint8_t{ 255 });
+        m_input = std::make_unique<Input>();
+        m_input->Init();
 
-        m_scheduler.RegisterVariableSystem([this](float dt) { m_renderer->Clear(); });
-        m_scheduler.RegisterVariableSystem([this](float dt) {
-            RenderSystem::Update(*m_world, *m_renderer);});
-        m_scheduler.RegisterVariableSystem([this](float dt) { m_renderer->Present(); });
-        m_scheduler.RegisterFixedSystem([this](float dt) {
-            MovementSystem::Update(*m_world, dt);});
-
-		//---------------------------------//
         LOG_STATUS("Engine Initialization Complete.");
         m_engine_running = true;
         return true;
-	}
+    }
+
+    void EngineCore::SetScene(std::unique_ptr<Scene> scene)
+    {
+        if (m_scene)
+            m_scene->Shutdown();
+
+        m_scene = std::move(scene);
+        m_scene->Init(*m_world, *m_renderer, *m_input);
+    }
 
     EngineCore::~EngineCore()
     {
-        LOG_STATUS("Engine Closing...");
+        LOG_STATUS("Engine Shutting Down...");
+
+        if (m_scene)
+            m_scene->Shutdown();
+        m_scene.reset();
+
+        m_input.reset();
+        m_world.reset();
+
 
         if (m_renderer)
             m_renderer->Shutdown();
-        m_renderer.reset(); 
+        m_renderer.reset();
 
         if (m_window)
         {
@@ -75,6 +79,7 @@ namespace DPE
         }
 
         SDL_Quit();
+        LOG_STATUS("Engine Shutdown: COMPLETE");
         DPE::Log::Shutdown();
     }
 
@@ -82,8 +87,8 @@ namespace DPE
     {
         if (!m_engine_running)
         {
-			LOG_WARN("Engine Start: FAIL");
-			return;
+            LOG_WARN("Engine Start: FAIL");
+            return;
         }
 
         LOG_STATUS("Engine Start: OK");
@@ -94,8 +99,8 @@ namespace DPE
                 if (event.type == SDL_EVENT_QUIT)
                     m_engine_running = false;
 
-            m_scheduler.Update();
+            m_input->Update();
+            m_world->Update();
         }
     }
 }
-

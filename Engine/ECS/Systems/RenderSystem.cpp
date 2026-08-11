@@ -1,6 +1,5 @@
-﻿
+﻿#include "RenderSystem.hpp"
 #include <Renderer/Renderer.hpp>
-#include <ECS/Systems/RenderSystem.hpp>
 #include <ECS/Components/Physics/Transform.hpp>
 #include <ECS/Components/Rendering/Sprite.hpp>
 

@@ -2,10 +2,11 @@
     EngineCore/EngineCore.cpp
     EngineCore/Scheduler.cpp
     Renderer/Renderer.cpp
-    ECS/Components/GameWorld.cpp
-    ECS/Systems/MovementSystem.cpp
     ECS/Systems/RenderSystem.cpp
-
+    ECS/Systems/MovementSystem.cpp
+    ECS/Systems/InputSystem.cpp
+    
+    Input/Input.cpp
     Log/Log.cpp
 )
 

@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include <ECS/Components/GameWorld.hpp>
+#include <World/GameWorld.hpp>
 
 namespace DPE
 {

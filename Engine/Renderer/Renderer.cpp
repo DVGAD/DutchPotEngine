@@ -1,6 +1,6 @@
 ﻿#include <SDL3/SDL_render.h>
-#include <Renderer/Renderer.hpp>
 #include <Log/Log.hpp>
+#include "Renderer.hpp"
 
 namespace DPE
 {
@@ -48,6 +48,5 @@ namespace DPE
         SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
         SDL_RenderFillRect(m_renderer, &rect);
     }
-
 }
 

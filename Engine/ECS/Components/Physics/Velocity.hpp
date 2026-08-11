@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#pragma once
-
 namespace DPE
 {
     struct Velocity

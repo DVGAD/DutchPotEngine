@@ -35,7 +35,6 @@ namespace DPE
 
     void Log::Shutdown()
     {
-		LOG_INFO("Log System Shutdown Complete.");
 		s_engine_task_logger.reset();
 		s_engine_info_logger.reset();
         s_engine_core_logger.reset();
